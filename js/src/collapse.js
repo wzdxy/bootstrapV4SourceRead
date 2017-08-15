@@ -171,7 +171,7 @@ const Collapse = (($) => {
 
       this.setTransitioning(true)         // 更新状态为 正在切换ing
 
-      const complete = () => {
+      const complete = () => {            // 切换完成后调用 , 移除 正在切换ing 状态 , 添加已展开的状态 , 去掉内联的高度
         $(this._element)
           .removeClass(ClassName.COLLAPSING)
           .addClass(ClassName.COLLAPSE)
@@ -181,7 +181,7 @@ const Collapse = (($) => {
 
         this.setTransitioning(false)
 
-        $(this._element).trigger(Event.SHOWN)
+        $(this._element).trigger(Event.SHOWN) // 触发 shown 事件
       }
 
       if (!Util.supportsTransitionEnd()) {
@@ -189,25 +189,25 @@ const Collapse = (($) => {
         return
       }
 
-      const capitalizedDimension = dimension[0].toUpperCase() + dimension.slice(1)  // 首字母大写的尺寸名
-      const scrollSize           = `scroll${capitalizedDimension}`
+      const capitalizedDimension = dimension[0].toUpperCase() + dimension.slice(1)  // 首字母大写的尺寸维度 ( 宽或者高 )
+      const scrollSize           = `scroll${capitalizedDimension}`                  // 获取实际尺寸
 
       $(this._element)
-        .one(Util.TRANSITION_END, complete)
-        .emulateTransitionEnd(TRANSITION_DURATION)
+        .one(Util.TRANSITION_END, complete)         // 切换结束的时候调用 complete 方法
+        .emulateTransitionEnd(TRANSITION_DURATION)  // 在延迟之后触发过渡结束的事件 (即上一步监听的 Util.TRANSITION_END 事件)
 
       this._element.style[dimension] = `${this._element[scrollSize]}px`   // 设置尺寸
     }
 
     hide() {
-      if (this._isTransitioning ||
+      if (this._isTransitioning ||                        // 如果正在切换ing - 不操作 , 未显示的 - 不操作
         !$(this._element).hasClass(ClassName.SHOW)) {
         return
       }
 
       const startEvent = $.Event(Event.HIDE)
-      $(this._element).trigger(startEvent)
-      if (startEvent.isDefaultPrevented()) {
+      $(this._element).trigger(startEvent)                // 开始切换
+      if (startEvent.isDefaultPrevented()) {              // 如果这个事件被 event.preventDefault() 阻止了 - 不操作
         return
       }
 
@@ -281,7 +281,7 @@ const Collapse = (($) => {
       Util.typeCheckConfig(NAME, config, DefaultType)
       return config
     }
-    // 获取尺寸属性 , width 优先
+    // 获取尺寸的维度 , width 优先
     _getDimension() {
       const hasWidth = $(this._element).hasClass(Dimension.WIDTH)
       return hasWidth ? Dimension.WIDTH : Dimension.HEIGHT

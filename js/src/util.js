@@ -65,13 +65,14 @@ const Util = (($) => {
     return false
   }
 
+  // 过渡结束仿真 ?
   function transitionEndEmulator(duration) {
     let called = false
 
     $(this).one(Util.TRANSITION_END, () => {
       called = true
     })
-
+    //延时结束之后触发过渡结束的事件
     setTimeout(() => {
       if (!called) {
         Util.triggerTransitionEnd(this)
